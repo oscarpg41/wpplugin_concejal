@@ -13,15 +13,16 @@ License: GPLv2
 
     /* Con este código, se crea una linea en el menú de Administración */
     function opg_show_menu_concejal(){
-        add_menu_page('Municipal Corporation','Municipal Corporation','manage_options','plugin_opg_concejal','opg_plugin_concejal_show_form_in_wpadmin', plugins_url('images/major.png', __FILE__));
-        //le hemos añadido al menú una imagen
+        add_menu_page('Oscar Pérez Plugins','Oscar Pérez Plugins','manage_options','opg_plugins','opg_plugin_links_show_form_in_wpadmin', '', 110);
+        add_submenu_page( 'opg_plugins', 'Municipal Corporation','Municipal Corporation', 'manage_options', 'opg_concejales', 'opg_plugin_concejal_show_form_in_wpadmin');
+        remove_submenu_page( 'opg_plugins', 'opg_plugins' );        
     }
     add_action( 'admin_menu', 'opg_show_menu_concejal' );
 
 
     //Hook al activar y desactivar el plugin
     register_activation_hook( __FILE__, 'opg_plugin_concejal_activate' );
-    register_deactivation_hook( __FILE__, 'opg_plugin_concejal_deactivate' );
+    register_uninstall_hook( __FILE__, 'opg_plugin_concejal_uninstall' );
 
 
     // Se crea la tabla al activar el plugin
@@ -35,7 +36,7 @@ License: GPLv2
     }
 
     // Se borra la tabla al desactivar el plugin
-    function opg_plugin_concejal_deactivate() {
+    function opg_plugin_concejal_uninstall() {
         global $wpdb;
         $sql = 'DROP TABLE `' . $wpdb->prefix . 'opg_plugin_concejal`';
         $wpdb->query($sql);
@@ -68,7 +69,7 @@ License: GPLv2
             return false;
         }
         else{
-            _e('<div class="updated"><p><strong>Concejal stored in database</strong></p></div>');
+            _e('<div class="updated"><p><strong>Información del concejal guardada correctamente</strong></p></div>');
         }
         return true;
     }
@@ -89,7 +90,7 @@ License: GPLv2
             return false;
         }
         else{
-            _e('<div class="updated"><p><strong>Concejal deleted to database</strong></p></div>');
+            _e('<div class="updated"><p><strong>Se ha borrado la información del concejal</strong></p></div>');
         }
         return true;
     }
@@ -113,7 +114,7 @@ License: GPLv2
             return false;
         }
         else{
-            _e('<div class="updated"><p><strong>Concejal updated in database</strong></p></div>');
+            _e('<div class="updated"><p><strong>Información del concejal actualizada</strong></p></div>');
         }
         return true;
     }
@@ -137,14 +138,14 @@ License: GPLv2
         if (count($records)>0){
 ?>
             <hr style="width:94%; margin:20px 0">
-	        <h2>Municipal corporation</h2>
+	        <h2>Corporacion municipal</h2>
             <table class="wp-list-table widefat manage-column" style="width:95%">            
              <thead>
                 <tr>
-                    <th scope="col" id="description" class="manage-column" style=""><span>Name</span></a></th>
-                    <th scope="col" id="description" class="manage-column" style=""><span>Description</span></a></th>
-                    <th scope="col" id="description" class="manage-column" style=""><span>Edit</span></a></th>
-                    <th scope="col" id="description" class="manage-column" style=""><span>Delete</span></a></th>
+                    <th scope="col" id="description" class="manage-column" style=""><span>Nombre</span></a></th>
+                    <th scope="col" id="description" class="manage-column" style=""><span>Cargo</span></a></th>
+                    <th scope="col" id="description" class="manage-column" style=""><span>Modificar</span></a></th>
+                    <th scope="col" id="description" class="manage-column" style=""><span>Borrar</span></a></th>
                 </tr>
              </thead>
              <tbody>
@@ -157,8 +158,8 @@ License: GPLv2
 ?>
                     <td><?php echo( $record->name ); ?></td>
                     <td><?php echo( nl2br($record->description) ); ?></td>
-                    <td><a href="admin.php?page=plugin_opg_concejal&amp;task=edit_concejal&amp;id=<?php echo( $record->idConcejal ); ?>">Edit</a></td>
-                    <td><a href="admin.php?page=plugin_opg_concejal&amp;task=remove_concejal&amp;id=<?php echo( $record->idConcejal ); ?>">Delete</a></td>                    
+                    <td><a href="admin.php?page=opg_concejales&amp;task=edit_concejal&amp;id=<?php echo( $record->idConcejal ); ?>">Modificar</a></td>
+                    <td><a href="admin.php?page=opg_concejales&amp;task=remove_concejal&amp;id=<?php echo( $record->idConcejal ); ?>">Borrar</a></td>                    
                 </tr>
 <?php                
             }
@@ -183,7 +184,7 @@ License: GPLv2
         $valueInputName  = "";
         $valueInputId    = "";
 
-	    echo("<div class='wrap'><h2>Add a Concejal</h2></div>"); 
+	    echo("<div class='wrap'><h2>Añadir un nuevo Concejal</h2></div>"); 
 
     	if(isset($_POST['action']) && $_POST['action'] == 'salvaropciones'){
 
@@ -224,25 +225,25 @@ License: GPLv2
             }
         }
 ?>
-        <form method='post' action='options-general.php?page=plugin_opg_concejal' name='opgPluginAdminForm' id='opgPluginAdminForm'>
+        <form method='post' action='admin.php?page=opg_concejales' name='opgPluginAdminForm' id='opgPluginAdminForm'>
             <input type='hidden' name='action' value='salvaropciones'> 
             <table class='form-table'>
                 <tbody>
                     <tr>
-                        <th><label for='name'>Name</label></th>
+                        <th><label for='name'>Nombre</label></th>
                         <td>
-                            <input type='text' name='name' id='name' placeholder='Enter a name' value="<?php echo $valueInputName ?>" style='width: 300px'>
+                            <input type='text' name='name' id='name' placeholder='Introduzca el nombre del concejal' value="<?php echo $valueInputName ?>" style='width: 300px'>
                         </td>
                     </tr>
                     <tr>
-                        <th><label for='description'>Description</label></th>
+                        <th><label for='description'>Cargo</label></th>
                         <td>
-                            <textarea name="description" id="description" placeholder='Enter a description' style='width: 500px;' rows=4><?php echo $valueInputDesc ?></textarea>
+                            <textarea name="description" id="description" placeholder='Introduzca el cargo del concejal' style='width: 500px;' rows=4><?php echo $valueInputDesc ?></textarea>
                         </td>
                     </tr>
                     <tr>
                         <td colspan='2' style='padding-left:140px'>
-                            <input type='submit' value='Send information'>
+                            <input type='submit' value='Enviar'>
                             <input type='hidden' name="idConcejal" value="<?php echo $valueInputId ?>">
                         </td>
                     </tr>
