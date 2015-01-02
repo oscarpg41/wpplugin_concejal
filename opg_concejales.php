@@ -1,23 +1,36 @@
 <?php
 /*
-Plugin Name: Municipal Corporation
+Plugin Name: OPG Corporación MUnicipal
 Plugin URI: http://www.oscarperez.es/wordpress-plugins/opg_concejales.zip
 Description: 
 Author: Oskar Pérez
 Author URI: http://www.oscarperez.es/
-Version: 1.0
+Version: 1.1
 License: GPLv2
+
+Releases:
+1.0 Versión inicial
+1.1 Se añade el campo email al registro del concejal. 
+    En el listado de concejales cambiamos los literales 'Modificar' y 'Borrar' por dos imagenes.
+    Antes de eliminar el registro, se pide una confirmación mediante un confirm de JavaScript
 */
 ?>
 <?php
 
+    //registramos el fichero js que necesitamos
+    wp_register_script('myPluginScript', WP_PLUGIN_URL . '/opg_concejales/opg_concejales.js');
+
+
     /* Con este código, se crea una linea en el menú de Administración */
     function opg_show_menu_concejal(){
         add_menu_page('Oscar Pérez Plugins','Oscar Pérez Plugins','manage_options','opg_plugins','opg_plugin_links_show_form_in_wpadmin', '', 110);
-        add_submenu_page( 'opg_plugins', 'Municipal Corporation','Municipal Corporation', 'manage_options', 'opg_concejales', 'opg_plugin_concejal_show_form_in_wpadmin');
-        remove_submenu_page( 'opg_plugins', 'opg_plugins' );        
+        add_submenu_page( 'opg_plugins', 'Municipal Corporation','Corporación Municipal', 'manage_options', 'opg_concejales', 'opg_plugin_concejal_show_form_in_wpadmin');
+        remove_submenu_page( 'opg_plugins', 'opg_plugins' );  
+        wp_enqueue_script('myPluginScript');
     }
+
     add_action( 'admin_menu', 'opg_show_menu_concejal' );
+
 
 
     //Hook al activar y desactivar el plugin
@@ -31,6 +44,7 @@ License: GPLv2
         $sql = 'CREATE TABLE IF NOT EXISTS `' . $wpdb->prefix . 'opg_plugin_concejal` 
             ( `idConcejal` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , 
               `name` VARCHAR( 255 ) NOT NULL , 
+              `email` VARCHAR( 100 ) NOT NULL , 
               `description` text )';
         $wpdb->query($sql);
     }
@@ -44,14 +58,12 @@ License: GPLv2
 
 
 
-
-
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         F U N C I O N E S   D E   A C C E S O   A   B A S E   D E   D A T O S
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     //función que guarda en base de datos la información introducida en el formulario
-    function opg_concejal_save($name, $description)
+    function opg_concejal_save($name, $email, $description)
     {
         global $wpdb;
         if (!( isset($name) && isset($description) )) {
@@ -60,9 +72,9 @@ License: GPLv2
         }
 
         $save_or_no = $wpdb->insert($wpdb->prefix . 'opg_plugin_concejal', array(
-                'idConcejal' => NULL, 'name' => esc_js(trim ($name)), 'description' => trim ($description),
+                'idConcejal' => NULL, 'name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description),
             ),
-            array('%d', '%s', '%s' )
+            array('%d', '%s', '%s', '%s' )
         );
         if (!$save_or_no) {
             _e('<div class="updated"><p><strong>Error. Please install plugin again</strong></p></div>');
@@ -96,7 +108,7 @@ License: GPLv2
     }
 
     //función para actualizar un teléfono
-    function opg_concejal_update($id, $name, $description)
+    function opg_concejal_update($id, $name, $email, $description)
     {
         global $wpdb;
         if (!( isset($name) && isset($description) )) {
@@ -105,9 +117,9 @@ License: GPLv2
         }
 
         $update_or_no = $wpdb->update($wpdb->prefix . 'opg_plugin_concejal', 
-            array('name' => esc_js(trim ($name)), 'description' => trim ($description)),
+            array('name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description)),
             array('idConcejal' => $id),
-            array('%s', '%s')
+            array('%s', '%s', '%s')
         );
         if (!$update_or_no) {
             _e('<div class="updated"><p><strong>Error. Please install plugin again</strong></p></div>');
@@ -124,7 +136,7 @@ License: GPLv2
     function opg_concejal_getId($id)
     {
         global $wpdb;
-        $row1 = $wpdb->get_row("SELECT name, description  FROM " . $wpdb->prefix . "opg_plugin_concejal  WHERE idConcejal=".$id);
+        $row1 = $wpdb->get_row("SELECT name, email, description  FROM " . $wpdb->prefix . "opg_plugin_concejal  WHERE idConcejal=".$id);
         return $row1;
     }
 
@@ -134,18 +146,19 @@ License: GPLv2
     {
         global $wpdb;
 
-        $records = $wpdb->get_results( 'SELECT idConcejal, name, description FROM ' . $wpdb->prefix . 'opg_plugin_concejal ORDER BY idConcejal' );
+        $records = $wpdb->get_results( 'SELECT idConcejal, name, email, description FROM ' . $wpdb->prefix . 'opg_plugin_concejal ORDER BY idConcejal' );
         if (count($records)>0){
 ?>
             <hr style="width:94%; margin:20px 0">
 	        <h2>Corporacion municipal</h2>
-            <table class="wp-list-table widefat manage-column" style="width:95%">            
+            <table class="wp-list-table widefat manage-column" style="width:98%">            
              <thead>
                 <tr>
-                    <th scope="col" id="description" class="manage-column" style=""><span>Nombre</span></a></th>
-                    <th scope="col" id="description" class="manage-column" style=""><span>Cargo</span></a></th>
-                    <th scope="col" id="description" class="manage-column" style=""><span>Modificar</span></a></th>
-                    <th scope="col" id="description" class="manage-column" style=""><span>Borrar</span></a></th>
+                    <th scope="col" id="description" class="manage-column"><span>Nombre</span></th>
+                    <th scope="col" id="description" class="manage-column"><span>Email</span></th>
+                    <th scope="col" id="description" class="manage-column"><span>Cargo</span></th>
+                    <th scope="col" id="description" class="manage-column"><span>&nbsp;</span></th>
+                    <th scope="col" id="description" class="manage-column"><span>&nbsp;</span></th>
                 </tr>
              </thead>
              <tbody>
@@ -157,9 +170,10 @@ License: GPLv2
                 else{ echo '<tr>'; }
 ?>
                     <td><?php echo( $record->name ); ?></td>
+                    <td nowrap><?php echo( $record->email ); ?></td>
                     <td><?php echo( nl2br($record->description) ); ?></td>
-                    <td><a href="admin.php?page=opg_concejales&amp;task=edit_concejal&amp;id=<?php echo( $record->idConcejal ); ?>">Modificar</a></td>
-                    <td><a href="admin.php?page=opg_concejales&amp;task=remove_concejal&amp;id=<?php echo( $record->idConcejal ); ?>">Borrar</a></td>                    
+                    <td><a href="admin.php?page=opg_concejales&amp;task=edit_concejal&amp;id=<?php echo( $record->idConcejal ); ?>"><img src="<?php echo WP_PLUGIN_URL.'/opg_concejales/modificar.png'?>" alt="Modificar"></a></td>                    
+                    <td><a href="javascript:borrar(<?php echo( $record->idConcejal );?>)"><img src="<?php echo WP_PLUGIN_URL.'/opg_concejales/papelera.png'?>" alt="Borrar"></a></td>                    
                 </tr>
 <?php                
             }
@@ -180,21 +194,22 @@ License: GPLv2
 	*/
 	function opg_plugin_concejal_show_form_in_wpadmin(){
  
-        $valueInputDesc = "";
+        $valueInputDesc  = "";
         $valueInputName  = "";
         $valueInputId    = "";
+        $valueInputEmail = "";
 
-	    echo("<div class='wrap'><h2>Añadir un nuevo Concejal</h2></div>"); 
+	    echo("<div class='wrap'><h2>Añadir un nuevo concejal</h2></div>"); 
 
     	if(isset($_POST['action']) && $_POST['action'] == 'salvaropciones'){
 
             //si el input idConcejal (hidden) está vacio, se trata de un nuevo registro
             if( strlen($_POST['idConcejal']) == 0 ){
                 //guardamos el teléfono
-                opg_concejal_save($_POST['name'], $_POST['description']);
+                opg_concejal_save($_POST['name'], $_POST['email'], $_POST['description']);
             }
             else{
-                opg_concejal_update($_POST['idConcejal'], $_POST['name'], $_POST['description']);
+                opg_concejal_update($_POST['idConcejal'], $_POST['name'], $_POST['email'], $_POST['description']);
             }   
 	    }
         else{
@@ -216,6 +231,7 @@ License: GPLv2
                     $valueInputDesc  = $row->description;
                     $valueInputName  = $row->name;
                     $valueInputId    = $id;
+                    $valueInputEmail = $row->email;                    
                     break;
                 case 'remove_concejal':
                     opg_concejal_remove($id);
@@ -233,6 +249,12 @@ License: GPLv2
                         <th><label for='name'>Nombre</label></th>
                         <td>
                             <input type='text' name='name' id='name' placeholder='Introduzca el nombre del concejal' value="<?php echo $valueInputName ?>" style='width: 300px'>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for='name'>Email</label></th>
+                        <td>
+                            <input type='text' name='email' id='email' placeholder='Introduzca el email del concejal' value="<?php echo $valueInputEmail ?>" style='width: 300px'>
                         </td>
                     </tr>
                     <tr>
