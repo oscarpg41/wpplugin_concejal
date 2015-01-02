@@ -11,9 +11,14 @@ License: GPLv2 or later
 
 This Concejal plugin helps to manage the councilor list of City Hall easily over the WordPress blog.
 
-The phonebook database have three columns:
-- `idConcejal` INT( 11 ) , 
+The opg_plugin_concejal database have three columns:
+
+- `idConcejal` INT( 11 ), 
+
 - `name` VARCHAR( 255 ) NOT NULL , 
+
+- `email` VARCHAR( 100 ) NOT NULL , 
+
 - `description` TEXT;
 
 The plugin contains four files:

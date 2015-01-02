@@ -7,18 +7,14 @@ Author: Oskar Pérez
 Author URI: http://www.oscarperez.es/
 Version: 1.1
 License: GPLv2
-
-Releases:
-1.0 Versión inicial
-1.1 Se añade el campo email al registro del concejal. 
-    En el listado de concejales cambiamos los literales 'Modificar' y 'Borrar' por dos imagenes.
-    Antes de eliminar el registro, se pide una confirmación mediante un confirm de JavaScript
 */
 ?>
 <?php
 
     //registramos el fichero js que necesitamos
-    wp_register_script('myPluginScript', WP_PLUGIN_URL . '/opg_concejales/opg_concejales.js');
+    //wp_register_script('myPluginConcejalesScript', WP_PLUGIN_URL . '/opg_concejales/opg_concejales.js');
+    wp_register_script('myPluginConcejalesScript', WP_PLUGIN_URL .'/opg_concejales/opg_concejales.js', array('jquery','media-upload','thickbox'));
+    wp_enqueue_script('myPluginConcejalesScript');    
 
 
     /* Con este código, se crea una linea en el menú de Administración */
@@ -26,7 +22,6 @@ Releases:
         add_menu_page('Oscar Pérez Plugins','Oscar Pérez Plugins','manage_options','opg_plugins','opg_plugin_links_show_form_in_wpadmin', '', 110);
         add_submenu_page( 'opg_plugins', 'Municipal Corporation','Corporación Municipal', 'manage_options', 'opg_concejales', 'opg_plugin_concejal_show_form_in_wpadmin');
         remove_submenu_page( 'opg_plugins', 'opg_plugins' );  
-        wp_enqueue_script('myPluginScript');
     }
 
     add_action( 'admin_menu', 'opg_show_menu_concejal' );
@@ -172,8 +167,8 @@ Releases:
                     <td><?php echo( $record->name ); ?></td>
                     <td nowrap><?php echo( $record->email ); ?></td>
                     <td><?php echo( nl2br($record->description) ); ?></td>
-                    <td><a href="admin.php?page=opg_concejales&amp;task=edit_concejal&amp;id=<?php echo( $record->idConcejal ); ?>"><img src="<?php echo WP_PLUGIN_URL.'/opg_concejales/img/modificar.png'?>" alt="Modificar"></a></td>                    
-                    <td><a href="javascript:borrarConcejal(<?php echo( $record->idConcejal );?>)"><img src="<?php echo WP_PLUGIN_URL.'/opg_concejales/img/papelera.png'?>" alt="Borrar"></a></td>                    
+                    <td><a href="admin.php?page=opg_concejales&amp;task=edit_concejal&amp;id=<?php echo( $record->idConcejal ); ?>"><img src="<?php echo WP_PLUGIN_URL.'/opg_concejales/img/modificar.png'?>" alt="Modificar"></a></td>
+                    <td><a href="#"><img src="<?php echo WP_PLUGIN_URL.'/opg_aside/img/papelera.png'?>" alt="Borrar" id="<?php echo( $record->idConcejal ); ?>" class="btnDeleteCouncilor"></a></td>
                 </tr>
 <?php                
             }
