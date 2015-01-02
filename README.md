@@ -30,9 +30,15 @@ You're done!
 == Changelog ==
 
 = 1.0.0 =
+
 *Release Date - 23rd November, 2014
+
 = 1.1.0 =
+
 *Release Date - 2rd January, 2015
+
 	The email field is added to the registry councilor.
+
     In the list of councilors changed the literal 'Modify' and 'Delete' by two images.
+
     Before deleting the record, a confirmation is requested by a JavaScript confirm.
