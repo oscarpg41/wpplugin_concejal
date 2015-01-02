@@ -16,8 +16,11 @@ The phonebook database have three columns:
 - `name` VARCHAR( 255 ) NOT NULL , 
 - `description` TEXT;
 
-The plugin contains one files:
+The plugin contains four files:
 - opg_concejales.php
+- opg_concejales.js
+- img/modificar.png
+- img/papelera.png
 
 == Installation ==
 
