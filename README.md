@@ -29,13 +29,9 @@ You're done!
 
 == Changelog ==
 
-= 1.0.0 =
+= 1.0.0 = *Release Date - 23rd November, 2014
 
-*Release Date - 23rd November, 2014
-
-= 1.1.0 =
-
-*Release Date - 2rd January, 2015
+= 1.1.0 = *Release Date - 2rd January, 2015
 
 	The email field is added to the registry councilor.
 
