@@ -154,11 +154,11 @@ Releases:
             <table class="wp-list-table widefat manage-column" style="width:98%">            
              <thead>
                 <tr>
-                    <th scope="col" id="description" class="manage-column"><span>Nombre</span></th>
-                    <th scope="col" id="description" class="manage-column"><span>Email</span></th>
-                    <th scope="col" id="description" class="manage-column"><span>Cargo</span></th>
-                    <th scope="col" id="description" class="manage-column"><span>&nbsp;</span></th>
-                    <th scope="col" id="description" class="manage-column"><span>&nbsp;</span></th>
+                    <th scope="col" class="manage-column"><span>Nombre</span></th>
+                    <th scope="col" class="manage-column"><span>Email</span></th>
+                    <th scope="col" class="manage-column"><span>Cargo</span></th>
+                    <th scope="col" class="manage-column"><span>&nbsp;</span></th>
+                    <th scope="col" class="manage-column"><span>&nbsp;</span></th>
                 </tr>
              </thead>
              <tbody>
@@ -172,8 +172,8 @@ Releases:
                     <td><?php echo( $record->name ); ?></td>
                     <td nowrap><?php echo( $record->email ); ?></td>
                     <td><?php echo( nl2br($record->description) ); ?></td>
-                    <td><a href="admin.php?page=opg_concejales&amp;task=edit_concejal&amp;id=<?php echo( $record->idConcejal ); ?>"><img src="<?php echo WP_PLUGIN_URL.'/opg_concejales/modificar.png'?>" alt="Modificar"></a></td>                    
-                    <td><a href="javascript:borrar(<?php echo( $record->idConcejal );?>)"><img src="<?php echo WP_PLUGIN_URL.'/opg_concejales/papelera.png'?>" alt="Borrar"></a></td>                    
+                    <td><a href="admin.php?page=opg_concejales&amp;task=edit_concejal&amp;id=<?php echo( $record->idConcejal ); ?>"><img src="<?php echo WP_PLUGIN_URL.'/opg_concejales/img/modificar.png'?>" alt="Modificar"></a></td>                    
+                    <td><a href="javascript:borrarConcejal(<?php echo( $record->idConcejal );?>)"><img src="<?php echo WP_PLUGIN_URL.'/opg_concejales/img/papelera.png'?>" alt="Borrar"></a></td>                    
                 </tr>
 <?php                
             }
