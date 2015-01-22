@@ -194,9 +194,7 @@ License: GPLv2
         $valueInputId    = "";
         $valueInputEmail = "";
 
-	    echo("<div class='wrap'><h2>Añadir un nuevo concejal</h2></div>"); 
-
-    	if(isset($_POST['action']) && $_POST['action'] == 'salvaropciones'){
+	    if(isset($_POST['action']) && $_POST['action'] == 'salvaropciones'){
 
             //si el input idConcejal (hidden) está vacio, se trata de un nuevo registro
             if( strlen($_POST['idConcejal']) == 0 ){
@@ -222,6 +220,7 @@ License: GPLv2
 
             switch ($task) {
                 case 'edit_concejal':
+                    echo("<div class='wrap'><h2>Modificar información del concejal</h2></div>"); 
                     $row = opg_concejal_getId($id);
                     $valueInputDesc  = $row->description;
                     $valueInputName  = $row->name;
@@ -232,6 +231,7 @@ License: GPLv2
                     opg_concejal_remove($id);
                     break;
                 default:
+                    echo("<div class='wrap'><h2>Añadir un nuevo concejal</h2></div>"); 
                     break;
             }
         }
