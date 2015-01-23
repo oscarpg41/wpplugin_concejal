@@ -129,11 +129,21 @@ License: GPLv2
             exit;
         }
 
-        $update_or_no = $wpdb->update($wpdb->prefix . 'opg_plugin_concejal', 
-            array( 'name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description), 'biography' => trim ($biography), 'image' => trim ($image) ),
-            array( 'idConcejal' => $id ),
-            array( '%s', '%s', '%s', '%s', '%s' )
-        );
+        if ( isset($image) && (strlen($image)>0) ){
+            $update_or_no = $wpdb->update($wpdb->prefix . 'opg_plugin_concejal', 
+                array( 'name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description), 'biography' => trim ($biography), 'image' => trim ($image) ),
+                array( 'idConcejal' => $id ),
+                array( '%s', '%s', '%s', '%s', '%s' )
+            );
+        }
+        else{
+            $update_or_no = $wpdb->update($wpdb->prefix . 'opg_plugin_concejal', 
+                array( 'name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description), 'biography' => trim ($biography) ),
+                array( 'idConcejal' => $id ),
+                array( '%s', '%s', '%s', '%s' )
+            );
+        }        
+
         if (!$update_or_no) {
             _e('<div class="updated"><p><strong>Error. Please install plugin again</strong></p></div>');
             return false;
