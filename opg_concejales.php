@@ -11,6 +11,23 @@ License: GPLv2
 ?>
 <?php
 
+//Lo que hacemos es añadir los scripts necesarios para que el cargador de medios de wordpress se muestre
+    function my_admin_scripts_photo_councilor() {
+        wp_enqueue_script('media-upload');
+        wp_enqueue_script('thickbox');
+        wp_register_script('my-upload', WP_PLUGIN_URL.'/opg_banners/opg_banners.js', array('jquery','media-upload','thickbox'));
+        wp_enqueue_script('my-upload');
+    }
+    function my_admin_styles_photo_councilor() {
+        wp_enqueue_style('thickbox');
+    }
+    if (isset($_GET['page']) && $_GET['page'] == 'opg_concejales') {
+        add_action('admin_print_scripts', 'my_admin_scripts_photo_councilor');
+        add_action('admin_print_styles', 'my_admin_styles_photo_councilor');
+    }
+    // cargador de medios de wordpress
+
+
     //registramos el fichero js que necesitamos
     //wp_register_script('myPluginConcejalesScript', WP_PLUGIN_URL . '/opg_concejales/opg_concejales.js');
     wp_register_script('myPluginConcejalesScript', WP_PLUGIN_URL .'/opg_concejales/opg_concejales.js', array('jquery','media-upload','thickbox'));
@@ -38,13 +55,15 @@ License: GPLv2
         global $wpdb;
         $sql = 'CREATE TABLE IF NOT EXISTS `' . $wpdb->prefix . 'opg_plugin_concejal` 
             ( `idConcejal` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , 
-              `name` VARCHAR( 255 ) NOT NULL , 
-              `email` VARCHAR( 100 ) NOT NULL , 
-              `description` text )';
+              `name` VARCHAR( 255 ) COLLATE utf8_spanish_ci NOT NULL , 
+              `email` VARCHAR( 100 ) COLLATE utf8_spanish_ci NOT NULL , 
+              `description` text COLLATE utf8_spanish_ci NOT NULL,
+              `biography` text COLLATE utf8_spanish_ci ,
+              `image` VARCHAR( 140 ) NOT NULL ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci';
         $wpdb->query($sql);
     }
 
-    // Se borra la tabla al desactivar el plugin
+    // Se borra la tabla al desisntalar el plugin
     function opg_plugin_concejal_uninstall() {
         global $wpdb;
         $sql = 'DROP TABLE `' . $wpdb->prefix . 'opg_plugin_concejal`';
@@ -58,7 +77,7 @@ License: GPLv2
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     //función que guarda en base de datos la información introducida en el formulario
-    function opg_concejal_save($name, $email, $description)
+    function opg_concejal_save($name, $email, $description, $biography, $image)
     {
         global $wpdb;
         if (!( isset($name) && isset($description) )) {
@@ -66,10 +85,9 @@ License: GPLv2
             exit;
         }
 
-        $save_or_no = $wpdb->insert($wpdb->prefix . 'opg_plugin_concejal', array(
-                'idConcejal' => NULL, 'name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description),
-            ),
-            array('%d', '%s', '%s', '%s' )
+        $save_or_no = $wpdb->insert($wpdb->prefix . 'opg_plugin_concejal', 
+            array( 'idConcejal' => NULL, 'name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description), 'biography' => trim ($biography), 'image' => trim ($image) ),
+            array( '%d', '%s', '%s', '%s', '%s', '%s' )
         );
         if (!$save_or_no) {
             _e('<div class="updated"><p><strong>Error. Please install plugin again</strong></p></div>');
@@ -103,7 +121,7 @@ License: GPLv2
     }
 
     //función para actualizar un teléfono
-    function opg_concejal_update($id, $name, $email, $description)
+    function opg_concejal_update($id, $name, $email, $description, $biography, $image)
     {
         global $wpdb;
         if (!( isset($name) && isset($description) )) {
@@ -112,9 +130,9 @@ License: GPLv2
         }
 
         $update_or_no = $wpdb->update($wpdb->prefix . 'opg_plugin_concejal', 
-            array('name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description)),
-            array('idConcejal' => $id),
-            array('%s', '%s', '%s')
+            array( 'name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description), 'biography' => trim ($biography), 'image' => trim ($image) ),
+            array( 'idConcejal' => $id ),
+            array( '%s', '%s', '%s', '%s', '%s' )
         );
         if (!$update_or_no) {
             _e('<div class="updated"><p><strong>Error. Please install plugin again</strong></p></div>');
@@ -131,7 +149,7 @@ License: GPLv2
     function opg_concejal_getId($id)
     {
         global $wpdb;
-        $row1 = $wpdb->get_row("SELECT name, email, description  FROM " . $wpdb->prefix . "opg_plugin_concejal  WHERE idConcejal=".$id);
+        $row1 = $wpdb->get_row("SELECT name, email, description, biography, image  FROM " . $wpdb->prefix . "opg_plugin_concejal  WHERE idConcejal=".$id);
         return $row1;
     }
 
@@ -141,7 +159,7 @@ License: GPLv2
     {
         global $wpdb;
 
-        $records = $wpdb->get_results( 'SELECT idConcejal, name, email, description FROM ' . $wpdb->prefix . 'opg_plugin_concejal ORDER BY idConcejal' );
+        $records = $wpdb->get_results( 'SELECT idConcejal, name, email, description, biography, image FROM ' . $wpdb->prefix . 'opg_plugin_concejal ORDER BY idConcejal' );
         if (count($records)>0){
 ?>
             <hr style="width:94%; margin:20px 0">
@@ -193,16 +211,19 @@ License: GPLv2
         $valueInputName  = "";
         $valueInputId    = "";
         $valueInputEmail = "";
+        $valueInputBio   = "";
+        $valueInputImage = "";
+
 
 	    if(isset($_POST['action']) && $_POST['action'] == 'salvaropciones'){
 
             //si el input idConcejal (hidden) está vacio, se trata de un nuevo registro
             if( strlen($_POST['idConcejal']) == 0 ){
                 //guardamos el teléfono
-                opg_concejal_save($_POST['name'], $_POST['email'], $_POST['description']);
+                opg_concejal_save($_POST['name'], $_POST['email'], $_POST['description'], $_POST['biography'], $_POST['upload_image']);
             }
             else{
-                opg_concejal_update($_POST['idConcejal'], $_POST['name'], $_POST['email'], $_POST['description']);
+                opg_concejal_update($_POST['idConcejal'], $_POST['name'], $_POST['email'], $_POST['description'], $_POST['biography'], $_POST['upload_image']);
             }   
 	    }
         else{
@@ -225,7 +246,9 @@ License: GPLv2
                     $valueInputDesc  = $row->description;
                     $valueInputName  = $row->name;
                     $valueInputId    = $id;
-                    $valueInputEmail = $row->email;                    
+                    $valueInputEmail = $row->email;
+                    $valueInputBio   = $row->biography;
+                    $valueInputImage = $row->image;
                     break;
                 case 'remove_concejal':
                     opg_concejal_remove($id);
@@ -255,11 +278,32 @@ License: GPLv2
                     <tr>
                         <th><label for='description'>Cargo</label></th>
                         <td>
-                            <textarea name="description" id="description" placeholder='Introduzca el cargo del concejal' style='width: 500px;' rows=4><?php echo $valueInputDesc ?></textarea>
+                            <textarea name="description" id="description" placeholder='Introduzca el cargo del concejal' style='width: 95%;' rows=4><?php echo $valueInputDesc ?></textarea>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan='2' style='padding-left:140px'>
+                        <th><label for='biography'>Biografía</label></th>
+                        <td>
+                            <textarea name="biography" id="biography" placeholder='Introduzca biografía del concejal (mínimo de cuatro líneas cada uno).' style='width: 95%;' rows=10><?php echo $valueInputBio ?></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for='url'>Foto</label></th>
+                        <td>
+                        <?php 
+                            if (strlen($valueInputImage)>0){
+                        ?>
+                            <img src="<?php echo $valueInputImage ?>" width="150px" align="left" style="margin-right:3%">                         
+                        <?php                                                         
+                            }
+                        ?>
+                            <input type="text" name="upload_image" id="upload_image" value="" size='40' />
+                            <input type="button" class='button-secondary' id="upload_image_button" value="Subir nueva imagen" />  
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan='2' style='text-align:center; padding-top: 50px'>
                             <input type='submit' value='Enviar'>
                             <input type='hidden' name="idConcejal" value="<?php echo $valueInputId ?>">
                         </td>
