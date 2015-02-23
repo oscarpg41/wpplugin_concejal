@@ -15,7 +15,7 @@ License: GPLv2
     function my_admin_scripts_photo_councilor() {
         wp_enqueue_script('media-upload');
         wp_enqueue_script('thickbox');
-        wp_register_script('my-upload', WP_PLUGIN_URL.'/opg_banners/opg_banners.js', array('jquery','media-upload','thickbox'));
+        wp_register_script('my-upload', WP_PLUGIN_URL.'/opg_concejales/opg_concejales.js', array('jquery','media-upload','thickbox'));
         wp_enqueue_script('my-upload');
     }
     function my_admin_styles_photo_councilor() {
