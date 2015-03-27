@@ -10,6 +10,10 @@ License: GPLv2
 */
 ?>
 <?php
+<<<<<<< HEAD
+=======
+
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
 //Lo que hacemos es añadir los scripts necesarios para que el cargador de medios de wordpress se muestre
     function my_admin_scripts_photo_councilor() {
         wp_enqueue_script('media-upload');
@@ -25,10 +29,20 @@ License: GPLv2
         add_action('admin_print_styles', 'my_admin_styles_photo_councilor');
     }
     // cargador de medios de wordpress
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
     //registramos el fichero js que necesitamos
     //wp_register_script('myPluginConcejalesScript', WP_PLUGIN_URL . '/opg_concejales/opg_concejales.js');
     wp_register_script('myPluginConcejalesScript', WP_PLUGIN_URL .'/opg_concejales/opg_concejales.js', array('jquery','media-upload','thickbox'));
     wp_enqueue_script('myPluginConcejalesScript');    
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
     /* Con este código, se crea una linea en el menú de Administración */
     function opg_show_menu_concejal(){
         add_menu_page('Oscar Pérez Plugins','Oscar Pérez Plugins','manage_options','opg_plugins','opg_plugin_links_show_form_in_wpadmin', '', 110);
@@ -51,6 +65,10 @@ License: GPLv2
               `image` VARCHAR( 140 ) NOT NULL ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci';
         $wpdb->query($sql);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
     // Se borra la tabla al desisntalar el plugin
     function opg_plugin_concejal_uninstall() {
         global $wpdb;
@@ -68,6 +86,10 @@ License: GPLv2
             _e('cannot get \$_POST[]');
             exit;
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
         $save_or_no = $wpdb->insert($wpdb->prefix . 'opg_plugin_concejal', 
             array( 'idConcejal' => NULL, 'name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description), 'biography' => trim ($biography), 'image' => trim ($image) ),
             array( '%d', '%s', '%s', '%s', '%s', '%s' )
@@ -107,6 +129,10 @@ License: GPLv2
             _e('cannot get \$_POST[]');
             exit;
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
         if ( isset($image) && (strlen($image)>0) ){
             $update_or_no = $wpdb->update($wpdb->prefix . 'opg_plugin_concejal', 
                 array( 'name' => esc_js(trim ($name)), 'email' => trim ($email), 'description' => trim ($description), 'biography' => trim ($biography), 'image' => trim ($image) ),
@@ -121,6 +147,10 @@ License: GPLv2
                 array( '%s', '%s', '%s', '%s' )
             );
         }        
+<<<<<<< HEAD
+=======
+
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
         if (!$update_or_no) {
             _e('<div class="updated"><p><strong>Error. Please install plugin again</strong></p></div>');
             return false;
@@ -141,6 +171,10 @@ License: GPLv2
     function opg_concejal_getData()
     {
         global $wpdb;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
         $records = $wpdb->get_results( 'SELECT idConcejal, name, email, description, biography, image FROM ' . $wpdb->prefix . 'opg_plugin_concejal ORDER BY idConcejal' );
         if (count($records)>0){
 ?>
@@ -191,7 +225,14 @@ License: GPLv2
         $valueInputEmail = "";
         $valueInputBio   = "";
         $valueInputImage = "";
+<<<<<<< HEAD
         if(isset($_POST['action']) && $_POST['action'] == 'salvaropciones'){
+=======
+
+
+	    if(isset($_POST['action']) && $_POST['action'] == 'salvaropciones'){
+
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
             //si el input idConcejal (hidden) está vacio, se trata de un nuevo registro
             if( strlen($_POST['idConcejal']) == 0 ){
                 //guardamos el teléfono
@@ -252,9 +293,35 @@ License: GPLv2
                         <th><label for='description'>Cargo</label></th>
                         <td>
                             <textarea name="description" id="description" placeholder='Introduzca el cargo del concejal' style='width: 95%;' rows=4><?php echo $valueInputDesc ?></textarea>
+<<<<<<< HEAD
                         </td>
                     </tr>
                     <tr>
+                        <th><label for='biography'>Biografía</label></th>
+                        <td>
+                            <textarea name="biography" id="biography" placeholder='Introduzca biografía del concejal (mínimo de cuatro líneas cada uno).' style='width: 95%;' rows=10><?php echo $valueInputBio ?></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for='url'>Foto</label></th>
+                        <td>
+                        <?php 
+                            if (strlen($valueInputImage)>0){
+                        ?>
+                            <img src="<?php echo $valueInputImage ?>" width="150px" align="left" style="margin-right:3%">                         
+                        <?php                                                         
+                            }
+                        ?>
+                            <input type="text" name="upload_image" id="upload_image" value="" size='40' />
+                            <input type="button" class='button-secondary' id="upload_image_button" value="Subir nueva imagen" />  
+=======
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
+                        </td>
+                    </tr>
+
+                    <tr>
+<<<<<<< HEAD
+=======
                         <th><label for='biography'>Biografía</label></th>
                         <td>
                             <textarea name="biography" id="biography" placeholder='Introduzca biografía del concejal (mínimo de cuatro líneas cada uno).' style='width: 95%;' rows=10><?php echo $valueInputBio ?></textarea>
@@ -276,6 +343,7 @@ License: GPLv2
                     </tr>
 
                     <tr>
+>>>>>>> 61278696e6d728ec66555cd32ad3ba7ddba5c09a
                         <td colspan='2' style='text-align:center; padding-top: 50px'>
                             <input type='submit' value='Enviar'>
                             <input type='hidden' name="idConcejal" value="<?php echo $valueInputId ?>">
