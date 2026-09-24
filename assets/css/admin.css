@@ -1,0 +1,14 @@
+.cm-admin-wrap .cm-image-preview img {
+	display: block;
+	max-width: 160px;
+	height: auto;
+	border-radius: 6px;
+	margin-bottom: 10px;
+}
+
+.cm-admin-wrap .cm-admin-thumb {
+	width: 40px;
+	height: 40px;
+	object-fit: cover;
+	border-radius: 4px;
+}
