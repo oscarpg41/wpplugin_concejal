@@ -3,7 +3,7 @@ Corporación Municipal
 
 Developer: Óscar Pérez (www.oscarperez.es)
 Tested up to: 6.6
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 
 == Descripción ==
